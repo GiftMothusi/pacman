@@ -584,7 +584,10 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"bB7Pu":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _setup = require("./setup");
+var _gameBoard = require("./GameBoard");
+var _gameBoardDefault = parcelHelpers.interopDefault(_gameBoard);
 //DOM Elements
 const gameGrid = document.querySelector("#game");
 const scoreTable = document.querySelector("#score");
@@ -592,6 +595,7 @@ const startButton = document.querySelector("#start-button");
 //Game Constants
 const POWER_PILL_TIME = 1000; //ms
 const GLOBAL_SPEED = 80; //ms
+const gameBoard = (0, _gameBoardDefault.default).createGameBoard(gameGrid, (0, _setup.LEVEL));
 //Initial Setup
 let score = 0;
 let timer = null;
@@ -604,7 +608,7 @@ function checkCollision(pacman, ghosts) {}
 function gameLoop(pacman, ghosts) {}
 function startGame() {}
 
-},{"./setup":"b1uhz"}],"b1uhz":[function(require,module,exports) {
+},{"./setup":"b1uhz","./GameBoard":"2NYHR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"b1uhz":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "GRID_SIZE", ()=>GRID_SIZE);
@@ -1156,6 +1160,59 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}]},["km5uZ","bB7Pu"], "bB7Pu", "parcelRequiref884")
+},{}],"2NYHR":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _setup = require("./setup");
+class GameBoard {
+    ///To initialize an instance of a game
+    constructor(DOMGrid){
+        this.dotCount = 0;
+        this.grid = [];
+        this.DOMGrid = DOMGrid;
+    }
+    //Method for showing game play status
+    showGameStatus(gameWin) {
+        const div = document.createElement("div");
+        div.classList.add("game-status");
+        div.innerHTML = `${gameWin ? "WIN!" : "GAME OVER!"}`;
+        this.DOMGrid.appendChild(div);
+    }
+    //Method for creating gameBoard
+    createGrid(level) {
+        this.dotCount = 0;
+        this.grid = [];
+        this.DOMGrid.innerHTML = "";
+        this.DOMGrid.style.cssText = `grid-template-columns:repeat(${0, _setup.GRID_SIZE},${0, _setup.CELL_SIZE}px)`;
+        level.forEach((square)=>{
+            const div = document.createElement("div");
+            div.classList.add("square", (0, _setup.CLASS_LIST)[square]);
+            div.style.cssText = `width:${0, _setup.CELL_SIZE}px; height:${0, _setup.CELL_SIZE}px;`;
+            this.DOMGrid.appendChild(div);
+            this.grid.push(div);
+            if ((0, _setup.CLASS_LIST)[square] === (0, _setup.OBJECT_TYPE).DOT) this.dotCount++;
+        });
+    }
+    addObject(pos, classes) {
+        this.grid[pos].classList.add(...classes);
+    }
+    removeObject(pos, classes) {
+        this.grid[pos].classList.remove(...classes);
+    }
+    objectExist(pos, object) {
+        return this.grid[pos].classList.contains(object);
+    }
+    rotateDiv(pos, deg) {
+        this.grid[pos].style.transform = `rotate({deg}deg)`;
+    }
+    static createGameBoard(DOMGrid, level) {
+        const board = new this(DOMGrid);
+        board.createGrid(level);
+        return board;
+    }
+}
+exports.default = GameBoard;
+
+},{"./setup":"b1uhz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["km5uZ","bB7Pu"], "bB7Pu", "parcelRequiref884")
 
 //# sourceMappingURL=index.3d214d75.js.map
